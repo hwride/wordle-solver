@@ -92,21 +92,22 @@ function findNextGuess(guessConfig) {
   const wordsMostUniqueLetters = mapUniqueLettersToWords[mostUniqueLettersCount]
 
   // From the words with the most unique letters, find the one with the most vowels.
-  let largestVowelsCount = 0
-  const mapVowelsCount = {}
-  const isCommonVowel = letter => ['a', 'e', 'i', 'o', 'u'].includes(letter) // Leaving out less common y for now.
+  let largestCommonLetterCount = 0
+  const mapLargestCommonLetterCount = {}
+  // This is based on common letters used in english words
+  const isCommonLetter = letter => ['e', 'a', 'r', 'i', 'o'].includes(letter)
   wordsMostUniqueLetters.forEach(word => {
-    let vowelsCount = 0
+    let commonLetterCount = 0
     word.split('').forEach(letter => {
-      if(isCommonVowel(letter)) vowelsCount += 1
+      if(isCommonLetter(letter)) commonLetterCount += 1
     })
-    mapVowelsCount[vowelsCount] = mapVowelsCount[vowelsCount] || []
-    mapVowelsCount[vowelsCount].push(word)
-    if(vowelsCount > largestVowelsCount) {
-      largestVowelsCount = vowelsCount
+    mapLargestCommonLetterCount[commonLetterCount] = mapLargestCommonLetterCount[commonLetterCount] || []
+    mapLargestCommonLetterCount[commonLetterCount].push(word)
+    if(commonLetterCount > largestCommonLetterCount) {
+      largestCommonLetterCount = commonLetterCount
     }
   })
-  const wordToUse = mapVowelsCount[largestVowelsCount][0]
+  const wordToUse = mapLargestCommonLetterCount[largestCommonLetterCount][0]
 
   if(wordToUse == null) {
     throw new Error('Found no matching words')

@@ -34,7 +34,7 @@ describe('find next guess', () => {
         { match: 'unknown' },
         { match: 'unknown' }
       ]
-    })).toBe('audio')
+    })).toBe('radio')
   })
 
   it('should not match a non-matching letter', () => {
@@ -47,7 +47,7 @@ describe('find next guess', () => {
         { match: 'unknown' }
       ],
       nonMatchingLetters: ['a']
-    })).toBe('louie')
+    })).toBe('goier')
   })
 
   it('should match a single unknown letter', () => {
@@ -72,7 +72,7 @@ describe('find next guess', () => {
         { match: 'unknown' }
       ],
       matchingUnknownPositionLetters: ['f']
-    })).toBe('boeuf')
+    })).toBe('feria')
   })
 
 })
@@ -181,7 +181,7 @@ describe('guesser full tests', () => {
 
   it('should guess boats', () => testGuesserAgainstWord('boats'))
   it('should guess watch', () => testGuesserAgainstWord('watch'))
-  // it('should guess tools', () => testGuesserAgainstWord('tools')) // currently fails
+  it('should guess tools', () => testGuesserAgainstWord('tools'))
   it('should guess stool', () => testGuesserAgainstWord('stool'))
   it('should guess gypsy', () => testGuesserAgainstWord('gypsy'))
   it('should guess crypt', () => testGuesserAgainstWord('crypt'))
