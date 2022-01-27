@@ -1,7 +1,7 @@
 {
   "name": "wordle-solver",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack --mode=production"
   },
   "devDependencies": {
     "jest": "^27.4.7",
