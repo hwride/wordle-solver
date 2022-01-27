@@ -180,14 +180,23 @@ describe('modify config from guess', () => {
 describe('guesser full tests', () => {
 
   it('should guess boats', () => testGuesserAgainstWord('boats'))
+  it('should guess watch', () => testGuesserAgainstWord('watch'))
+  // it('should guess tools', () => testGuesserAgainstWord('tools')) // currently fails
+  it('should guess stool', () => testGuesserAgainstWord('stool'))
+  it('should guess stool', () => testGuesserAgainstWord('gypsy'))
+  it('should guess stool', () => testGuesserAgainstWord('crypt'))
+  it('should guess knoll', () => testGuesserAgainstWord('knoll'))
 
   function testGuesserAgainstWord(word) {
     const makeGuess = createGameBoard(word)
     const guesser = createGuesser()
 
+    let logStr = `Word to guess: ${word}\n`;
+
     let isCorrect = false
     for(let i = 0; i < numberOfGuesses; i++) {
       const guess = guesser.findNextGuess()
+      logStr += `Guess ${i + 1}/${numberOfGuesses}: ${guess}\n`
       const guessResponse = makeGuess(guess)
       if(guessResponse.correct) {
         isCorrect = true
@@ -195,6 +204,9 @@ describe('guesser full tests', () => {
       }
       guesser.reportGuessResponse(guessResponse.wordMatch)
     }
+    logStr += isCorrect ? 'Success!' : 'Fail'
+    console.log(logStr)
+
     expect(isCorrect).toBe(true)
   }
 
