@@ -1,5 +1,5 @@
-const { numberOfGuesses } = require('./config')
-const { initGuessConfig, findNextGuess, reportGuessResponse, createGuesser } = require('./guesser')
+const { initGuessConfig, findNextGuess, reportGuessResponse } = require('./guesser')
+const testGuesserAgainstWord = require('./guesser-test-utils')
 
 describe('find next guess', () => {
 
@@ -186,57 +186,5 @@ describe('guesser full tests', () => {
   it('should guess gypsy', () => testGuesserAgainstWord('gypsy'))
   it('should guess crypt', () => testGuesserAgainstWord('crypt'))
   it('should guess knoll', () => testGuesserAgainstWord('knoll'))
-
-  function testGuesserAgainstWord(word) {
-    const makeGuess = createGameBoard(word)
-    const guesser = createGuesser()
-
-    let logStr = `Word to guess: ${word}\n`;
-
-    let isCorrect = false
-    for(let i = 0; i < numberOfGuesses; i++) {
-      const guess = guesser.findNextGuess()
-      logStr += `Guess ${i + 1}/${numberOfGuesses}: ${guess}\n`
-      const guessResponse = makeGuess(guess)
-      if(guessResponse.correct) {
-        isCorrect = true
-        break
-      }
-      guesser.reportGuessResponse(guessResponse.wordMatch)
-    }
-    logStr += isCorrect ? 'Success!' : 'Fail'
-    console.log(logStr)
-
-    expect(isCorrect).toBe(true)
-  }
-
-  function createGameBoard(word) {
-    return (guessWord) => {
-      const guessResponse = {
-        wordMatch: []
-      }
-      let allLettersCorrect = true
-      const wordCharacters = new Set(Array.from(word))
-      for (let i = 0; i < 5; i++) {
-        const letter = word[i]
-        const guessLetter = guessWord[i]
-        const letterResponse = {
-          letter: guessLetter
-        }
-        if (letter === guessLetter) {
-          letterResponse.evaluation = 'correct'
-        } else if (wordCharacters.has(guessLetter)) {
-          letterResponse.evaluation = 'present'
-          allLettersCorrect = false
-        } else {
-          letterResponse.evaluation = 'absent'
-          allLettersCorrect = false
-        }
-        guessResponse.wordMatch.push(letterResponse)
-      }
-      guessResponse.correct = allLettersCorrect
-      return guessResponse
-    }
-  }
 
 })
