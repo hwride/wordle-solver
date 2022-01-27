@@ -76,23 +76,43 @@ function findNextGuess(guessConfig) {
   }
 
   // Find the first candidate word with the most unique letters.
-  let lastUniqueLettersCount = 0
-  let wordMostUniqueLetters
+  let mostUniqueLettersCount = 0
+  const mapUniqueLettersToWords = {}
   candidateWords.forEach(word => {
     const lettersSet = new Set()
     word.split('').forEach(letter => lettersSet.add(letter))
-    const uniqueLetters = Array.from(lettersSet).length
-    if(uniqueLetters > lastUniqueLettersCount) {
-      wordMostUniqueLetters = word
-      lastUniqueLettersCount = uniqueLetters
+    const uniqueLettersCount = Array.from(lettersSet).length
+    mapUniqueLettersToWords[uniqueLettersCount] = mapUniqueLettersToWords[uniqueLettersCount] || []
+    mapUniqueLettersToWords[uniqueLettersCount].push(word)
+    if(uniqueLettersCount > mostUniqueLettersCount) {
+      mostUniqueLettersCount = uniqueLettersCount
     }
   })
 
-  if(wordMostUniqueLetters == null) {
+  const wordsMostUniqueLetters = mapUniqueLettersToWords[mostUniqueLettersCount]
+
+  // From the words with the most unique letters, find the one with the most vowels.
+  let largestVowelsCount = 0
+  const mapVowelsCount = {}
+  const isCommonVowel = letter => ['a', 'e', 'i', 'o', 'u'].includes(letter) // Leaving out less common y for now.
+  wordsMostUniqueLetters.forEach(word => {
+    let vowelsCount = 0
+    word.split('').forEach(letter => {
+      if(isCommonVowel(letter)) vowelsCount += 1
+    })
+    mapVowelsCount[vowelsCount] = mapVowelsCount[vowelsCount] || []
+    mapVowelsCount[vowelsCount].push(word)
+    if(vowelsCount > largestVowelsCount) {
+      largestVowelsCount = vowelsCount
+    }
+  })
+  const wordToUse = mapVowelsCount[largestVowelsCount][0]
+
+  if(wordToUse == null) {
     throw new Error('Found no matching words')
   }
 
-  return wordMostUniqueLetters
+  return wordToUse
 }
 
 /**

@@ -34,20 +34,20 @@ describe('find next guess', () => {
         { match: 'unknown' },
         { match: 'unknown' }
       ]
-    })).toBe('cigar')
+    })).toBe('audio')
   })
 
   it('should not match a non-matching letter', () => {
     expect(findNextGuess({
       wordMatch: [
-        { match: 'unknown', nonMatchingLetters: ['c'] },
+        { match: 'unknown', nonMatchingLetters: ['a'] },
         { match: 'unknown' },
         { match: 'unknown' },
         { match: 'unknown' },
         { match: 'unknown' }
       ],
-      nonMatchingLetters: ['c']
-    })).toBe('rebut')
+      nonMatchingLetters: ['a']
+    })).toBe('louie')
   })
 
   it('should match a single unknown letter', () => {
@@ -72,7 +72,7 @@ describe('find next guess', () => {
         { match: 'unknown' }
       ],
       matchingUnknownPositionLetters: ['f']
-    })).toBe('focal')
+    })).toBe('boeuf')
   })
 
 })
@@ -183,8 +183,8 @@ describe('guesser full tests', () => {
   it('should guess watch', () => testGuesserAgainstWord('watch'))
   // it('should guess tools', () => testGuesserAgainstWord('tools')) // currently fails
   it('should guess stool', () => testGuesserAgainstWord('stool'))
-  it('should guess stool', () => testGuesserAgainstWord('gypsy'))
-  it('should guess stool', () => testGuesserAgainstWord('crypt'))
+  it('should guess gypsy', () => testGuesserAgainstWord('gypsy'))
+  it('should guess crypt', () => testGuesserAgainstWord('crypt'))
   it('should guess knoll', () => testGuesserAgainstWord('knoll'))
 
   function testGuesserAgainstWord(word) {
