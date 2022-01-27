@@ -1,4 +1,4 @@
-const { initGuessConfig, findNextGuess, modifyConfigFromGuess } = require('./guesser')
+ const { createGuesser } = require('./guesser')
 
 const {
   delayBeforeCloseModalMs,
@@ -18,12 +18,13 @@ async function main() {
   var gameThemeManager = gameApp.shadowRoot.querySelector('game-theme-manager')
   var gameRows = gameThemeManager.querySelectorAll('game-row')
 
+  const guesser = createGuesser()
+
   await closeModalIfOpen(gameThemeManager)
 
   await wait(delayBeforeStartMs)
 
-  const guessConfig = initGuessConfig()
-  await makeGuesses(guessConfig)
+  await makeGuesses(guesser)
   async function closeModalIfOpen(gameThemeManager) {
     if(gameThemeManager.querySelector('game-modal').hasAttribute('open')) {
       await wait(delayBeforeCloseModalMs)
@@ -31,19 +32,19 @@ async function main() {
     }
   }
 
-  async function makeGuesses(guessConfig) {
+  async function makeGuesses(guesser) {
     let success = false
     let rowIndex = 0
     while(rowIndex < numberOfGuesses && !success) {
-      success = await makeGuess(guessConfig, rowIndex)
+      success = await makeGuess(guesser, rowIndex)
       rowIndex++
     }
   }
 
-  async function makeGuess(guessConfig, rowIndex) {
+  async function makeGuess(guesser, rowIndex) {
     let isGuessValidBool = false
     while(!isGuessValidBool) {
-      const guessWord = findNextGuess(guessConfig)
+      const guessWord = guesser.findNextGuess()
       await enterGuess(guessWord)
       await submitGuess()
       if(isGuessValid(rowIndex)) {
@@ -52,19 +53,19 @@ async function main() {
         // Clear existing word and guess again.
         await wait(delayAfterInvalidWordMs) // Make it look like it's stopping to think
         await clearGuess()
-        guessConfig.invalidWords.push(guessWord)
-
+        guesser.registerInvalidWord(guessWord)
       }
     }
     await waitForRowGuessToBeReady(rowIndex)
     const isSuccessBool = isSuccess(rowIndex)
     if(!isSuccessBool) {
-      modifyConfigFromGuess(guessConfig, getRowWord(rowIndex))
+      const guessResult = getRowWord(rowIndex)
+      guesser.modifyConfigFromGuess(guessResult)
     }
     return isSuccessBool
   }
 
-  async function waitForRowGuessToBeReady(rowIndex) {
+  async function waitForRowGuessToBeReady() {
     return await wait(delayWaitForGuessToBeReadyMs)
   }
 

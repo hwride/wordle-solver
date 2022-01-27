@@ -6,6 +6,18 @@ const getWords = require('./words')
 const words = getWords()
 
 /**
+ * Create a guesser you can use for making guesses and reporting results of guesses to.
+ */
+function createGuesser() {
+  const guessConfig = initGuessConfig()
+  return {
+    findNextGuess: () => findNextGuess(guessConfig),
+    modifyConfigFromGuess: guessResponse => modifyConfigFromGuess(guessConfig, guessResponse),
+    registerInvalidWord: word => guessConfig.invalidWords.push(word)
+  }
+}
+
+/**
  * Returns some guess config that can be used for a new game.
  */
 function initGuessConfig() {
@@ -110,6 +122,9 @@ function modifyConfigFromGuess(guessConfig, guessResponse) {
   }
 }
 
+exports.createGuesser = createGuesser
+
+// Exported for test only
 exports.initGuessConfig = initGuessConfig
 exports.findNextGuess = findNextGuess
 exports.modifyConfigFromGuess = modifyConfigFromGuess
