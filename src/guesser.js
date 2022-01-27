@@ -5,19 +5,41 @@ const {
 const getWords = require('./words')
 const words = getWords()
 
-function findMatchingWord(matchConfig) {
+/**
+ * Returns some guess config that can be used for a new game.
+ */
+function initGuessConfig() {
+  return {
+    wordMatch: [
+      { match: 'unknown', nonMatchingLetters: [] },
+      { match: 'unknown', nonMatchingLetters: [] },
+      { match: 'unknown', nonMatchingLetters: [] },
+      { match: 'unknown', nonMatchingLetters: [] },
+      { match: 'unknown', nonMatchingLetters: [] }
+    ],
+    nonMatchingLetters: [],
+    matchingUnknownPositionLetters: [],
+    nonMatchingWords: [],
+    invalidWords: []
+  }
+}
+
+/**
+ * Given some guess config, returns the next word which should be used to guess.
+ */
+function findNextGuess(guessConfig) {
   const nonMatchingLettersSet = new Set()
-  if(matchConfig.nonMatchingLetters) {
-    matchConfig.nonMatchingLetters.forEach(letter => nonMatchingLettersSet.add(letter))
+  if(guessConfig.nonMatchingLetters) {
+    guessConfig.nonMatchingLetters.forEach(letter => nonMatchingLettersSet.add(letter))
   }
 
   let candidateWords = words.filter(word => {
-    if(matchConfig.invalidWords && matchConfig.invalidWords.includes(word)) return false
-    if(matchConfig.nonMatchingWords && matchConfig.nonMatchingWords.includes(word)) return false
+    if(guessConfig.invalidWords && guessConfig.invalidWords.includes(word)) return false
+    if(guessConfig.nonMatchingWords && guessConfig.nonMatchingWords.includes(word)) return false
 
     for(let i = 0; i < 5; i++) {
       const letter = word[i]
-      const letterMatch = matchConfig.wordMatch[i]
+      const letterMatch = guessConfig.wordMatch[i]
       if(letterMatch.match === 'exact') {
         if(letter !== letterMatch.letter) {
           return false
@@ -35,9 +57,9 @@ function findMatchingWord(matchConfig) {
   })
 
   // If we have some letters we know exist but don't know where, filter out words without these letters.
-  if(matchConfig.matchingUnknownPositionLetters) {
+  if(guessConfig.matchingUnknownPositionLetters) {
     candidateWords = candidateWords.filter(word => {
-      return matchConfig.matchingUnknownPositionLetters.every(letter => word.includes(letter))
+      return guessConfig.matchingUnknownPositionLetters.every(letter => word.includes(letter))
     })
   }
 
@@ -61,26 +83,33 @@ function findMatchingWord(matchConfig) {
   return wordMostUniqueLetters
 }
 
+/**
+ * Modify some given guess config according to the response to a guess.
+ */
 function modifyConfigFromGuess(guessConfig, guessResponse) {
+  let isCorrect = true
   let guessWord = ''
   for(let i = 0; i < numberOfLetters; i++) {
     const guessResponseLetter = guessResponse[i]
     guessWord += guessResponseLetter.letter
     if(guessResponseLetter.evaluation === 'correct') {
-      guessConfig.wordMatch[i] = {
-        match: 'exact',
-        letter: guessResponseLetter.letter
-      }
+      guessConfig.wordMatch[i].match = 'exact'
+      guessConfig.wordMatch[i].letter = guessResponseLetter.letter
     } else if(guessResponseLetter.evaluation === 'present') {
       guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
       guessConfig.matchingUnknownPositionLetters.push(guessResponseLetter.letter)
+      isCorrect = false
     } else {
       guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
       guessConfig.nonMatchingLetters.push(guessResponseLetter.letter)
+      isCorrect = false
     }
   }
-  guessConfig.nonMatchingWords.push(guessWord)
+  if(!isCorrect) {
+    guessConfig.nonMatchingWords.push(guessWord)
+  }
 }
 
-exports.findMatchingWord = findMatchingWord
+exports.initGuessConfig = initGuessConfig
+exports.findNextGuess = findNextGuess
 exports.modifyConfigFromGuess = modifyConfigFromGuess

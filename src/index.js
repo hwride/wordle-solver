@@ -1,4 +1,4 @@
-const { findMatchingWord, modifyConfigFromGuess } = require('./guesser')
+const { initGuessConfig, findNextGuess, modifyConfigFromGuess } = require('./guesser')
 
 const {
   delayBeforeCloseModalMs,
@@ -22,19 +22,7 @@ async function main() {
 
   await wait(delayBeforeStartMs)
 
-  const guessConfig = {
-    wordMatch: [
-      { match: 'unknown', nonMatchingLetters: [] },
-      { match: 'unknown', nonMatchingLetters: [] },
-      { match: 'unknown', nonMatchingLetters: [] },
-      { match: 'unknown', nonMatchingLetters: [] },
-      { match: 'unknown', nonMatchingLetters: [] }
-    ],
-    nonMatchingLetters: [],
-    matchingUnknownPositionLetters: [],
-    nonMatchingWords: [],
-    invalidWords: []
-  }
+  const guessConfig = initGuessConfig()
   await makeGuesses(guessConfig)
   async function closeModalIfOpen(gameThemeManager) {
     if(gameThemeManager.querySelector('game-modal').hasAttribute('open')) {
@@ -55,7 +43,7 @@ async function main() {
   async function makeGuess(guessConfig, rowIndex) {
     let isGuessValidBool = false
     while(!isGuessValidBool) {
-      const guessWord = findMatchingWord(guessConfig)
+      const guessWord = findNextGuess(guessConfig)
       await enterGuess(guessWord)
       await submitGuess()
       if(isGuessValid(rowIndex)) {

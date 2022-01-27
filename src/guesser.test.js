@@ -1,9 +1,9 @@
-const { findMatchingWord } = require('./guesser')
+const { initGuessConfig, findNextGuess, modifyConfigFromGuess } = require('./guesser')
 
-describe('find matching word', () => {
+describe('find next guess', () => {
 
   it('should match all exact letters', () => {
-    expect(findMatchingWord({
+    expect(findNextGuess({
       wordMatch: [
         { match: 'exact', letter: 'b' },
         { match: 'exact', letter: 'o' },
@@ -13,7 +13,7 @@ describe('find matching word', () => {
       ]
     })).toBe('boats')
 
-    expect(findMatchingWord({
+    expect(findNextGuess({
       wordMatch: [
         { match: 'exact', letter: 's' },
         { match: 'exact', letter: 'h' },
@@ -25,7 +25,7 @@ describe('find matching word', () => {
   })
 
   it('should match all unknown letters', () => {
-    expect(findMatchingWord({
+    expect(findNextGuess({
       wordMatch: [
         { match: 'unknown' },
         { match: 'unknown' },
@@ -37,7 +37,7 @@ describe('find matching word', () => {
   })
 
   it('should not match a non-matching letter', () => {
-    expect(findMatchingWord({
+    expect(findNextGuess({
       wordMatch: [
         { match: 'unknown', nonMatchingLetters: ['c'] },
         { match: 'unknown' },
@@ -50,7 +50,7 @@ describe('find matching word', () => {
   })
 
   it('should match a single unknown letter', () => {
-    expect(findMatchingWord({
+    expect(findNextGuess({
       wordMatch: [
         { match: 'exact', letter: 'b' },
         { match: 'exact', letter: 'o' },
@@ -62,7 +62,7 @@ describe('find matching word', () => {
   })
 
   it('should match letters in an unknown position', () => {
-    expect(findMatchingWord({
+    expect(findNextGuess({
       wordMatch: [
         { match: 'unknown' },
         { match: 'unknown', nonMatchingLetters: ['f'] },
@@ -72,6 +72,34 @@ describe('find matching word', () => {
       ],
       matchingUnknownPositionLetters: ['f']
     })).toBe('focal')
+  })
+
+})
+
+describe('modify config from guess', () => {
+
+  it('should mark letters at exact when they match exactly', () => {
+    const guessConfig = initGuessConfig()
+    modifyConfigFromGuess(guessConfig, [
+      { evaluation: 'correct', letter: 'b' },
+      { evaluation: 'correct', letter: 'o' },
+      { evaluation: 'correct', letter: 'a' },
+      { evaluation: 'correct', letter: 't' },
+      { evaluation: 'correct', letter: 's' },
+    ])
+    expect(guessConfig).toEqual({
+      wordMatch: [
+        { match: 'exact', letter: 'b', nonMatchingLetters: [] },
+        { match: 'exact', letter: 'o', nonMatchingLetters: [] },
+        { match: 'exact', letter: 'a', nonMatchingLetters: [] },
+        { match: 'exact', letter: 't', nonMatchingLetters: [] },
+        { match: 'exact', letter: 's', nonMatchingLetters: [] }
+      ],
+      nonMatchingLetters: [],
+      matchingUnknownPositionLetters: [],
+      nonMatchingWords: [],
+      invalidWords: []
+    })
   })
 
 })
