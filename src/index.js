@@ -16,7 +16,7 @@ async function main() {
   var gameThemeManager = gameApp.shadowRoot.querySelector('game-theme-manager')
   var gameRows = gameThemeManager.querySelectorAll('game-row')
 
-  closeModalIfOpen(gameThemeManager)
+  await closeModalIfOpen(gameThemeManager)
 
   await wait(delayBeforeStartMs)
 
@@ -35,7 +35,7 @@ async function main() {
   }
   await makeGuesses(guessConfig)
   async function closeModalIfOpen(gameThemeManager) {
-    if(gameThemeManager.querySelector('game-modal').removeAttribute('open')) {
+    if(gameThemeManager.querySelector('game-modal').hasAttribute('open')) {
       await wait(delayBeforeCloseModalMs)
       gameThemeManager.querySelector('game-modal').removeAttribute('open')
     }
