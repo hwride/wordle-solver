@@ -1,13 +1,15 @@
-const findMatchingWord = require('./findMatchingWord')
+const { findMatchingWord, modifyConfigFromGuess } = require('./guesser')
 
-const delayBeforeCloseModalMs = 1000
-const delayBeforeStartMs = 1000
-const delayAfterInvalidWordMs = 500
-const delayBetweenEnterLetterMs = 200
-const delayBetweenDeleteLetterMs = 100
-const delayWaitForGuessToBeReadyMs = 3000
-const numberOfLetters = 5
-const numberOfGuesses = 6
+const {
+  delayBeforeCloseModalMs,
+  delayBeforeStartMs,
+  delayAfterInvalidWordMs,
+  delayBetweenEnterLetterMs,
+  delayBetweenDeleteLetterMs,
+  delayWaitForGuessToBeReadyMs,
+  numberOfLetters,
+  numberOfGuesses,
+} = require('./config')
 
 main()
 
@@ -76,27 +78,6 @@ async function main() {
 
   async function waitForRowGuessToBeReady(rowIndex) {
     return await wait(delayWaitForGuessToBeReadyMs)
-  }
-
-  function modifyConfigFromGuess(guessConfig, guessResponse) {
-    let guessWord = ''
-    for(let i = 0; i < numberOfLetters; i++) {
-      const guessResponseLetter = guessResponse[i]
-      guessWord += guessResponseLetter.letter
-      if(guessResponseLetter.evaluation === 'correct') {
-        guessConfig.wordMatch[i] = {
-          match: 'exact',
-          letter: guessResponseLetter.letter
-        }
-      } else if(guessResponseLetter.evaluation === 'present') {
-        guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
-        guessConfig.matchingUnknownPositionLetters.push(guessResponseLetter.letter)
-      } else {
-        guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
-        guessConfig.nonMatchingLetters.push(guessResponseLetter.letter)
-      }
-    }
-    guessConfig.nonMatchingWords.push(guessWord)
   }
 
   function isGuessValid(rowIndex) {

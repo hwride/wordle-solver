@@ -1,7 +1,11 @@
+const {
+  numberOfLetters,
+} = require('./config')
+
 const getWords = require('./words')
 const words = getWords()
 
-module.exports = function findMatchingWord(matchConfig) {
+function findMatchingWord(matchConfig) {
   const nonMatchingLettersSet = new Set()
   if(matchConfig.nonMatchingLetters) {
     matchConfig.nonMatchingLetters.forEach(letter => nonMatchingLettersSet.add(letter))
@@ -56,3 +60,27 @@ module.exports = function findMatchingWord(matchConfig) {
 
   return wordMostUniqueLetters
 }
+
+function modifyConfigFromGuess(guessConfig, guessResponse) {
+  let guessWord = ''
+  for(let i = 0; i < numberOfLetters; i++) {
+    const guessResponseLetter = guessResponse[i]
+    guessWord += guessResponseLetter.letter
+    if(guessResponseLetter.evaluation === 'correct') {
+      guessConfig.wordMatch[i] = {
+        match: 'exact',
+        letter: guessResponseLetter.letter
+      }
+    } else if(guessResponseLetter.evaluation === 'present') {
+      guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
+      guessConfig.matchingUnknownPositionLetters.push(guessResponseLetter.letter)
+    } else {
+      guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
+      guessConfig.nonMatchingLetters.push(guessResponseLetter.letter)
+    }
+  }
+  guessConfig.nonMatchingWords.push(guessWord)
+}
+
+exports.findMatchingWord = findMatchingWord
+exports.modifyConfigFromGuess = modifyConfigFromGuess
