@@ -179,12 +179,17 @@ describe('modify config from guess', () => {
 
 describe('guesser full tests', () => {
 
-  it('should guess boats', () => testGuesserAgainstWord('boats'))
-  it('should guess watch', () => testGuesserAgainstWord('watch'))
-  it('should guess tools', () => testGuesserAgainstWord('tools'))
-  it('should guess stool', () => testGuesserAgainstWord('stool'))
-  it('should guess gypsy', () => testGuesserAgainstWord('gypsy'))
-  it('should guess crypt', () => testGuesserAgainstWord('crypt'))
-  it('should guess knoll', () => testGuesserAgainstWord('knoll'))
+  it('should guess boats', () => testGuesserAgainstWordAndAssert('boats'))
+  it('should guess watch', () => testGuesserAgainstWordAndAssert('watch'))
+  it('should guess tools', () => testGuesserAgainstWordAndAssert('tools'))
+  it('should guess stool', () => testGuesserAgainstWordAndAssert('stool'))
+  it('should guess gypsy', () => testGuesserAgainstWordAndAssert('gypsy'))
+  it('should guess crypt', () => testGuesserAgainstWordAndAssert('crypt'))
+  it('should guess knoll', () => testGuesserAgainstWordAndAssert('knoll'))
+
+  function testGuesserAgainstWordAndAssert(word) {
+    const isCorrect = testGuesserAgainstWord(word)
+    expect(isCorrect).toBe(true)
+  }
 
 })

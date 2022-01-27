@@ -1,7 +1,7 @@
 const { createGuesser } = require('./guesser')
 const { numberOfGuesses } = require('./config')
 
-module.exports = function testGuesserAgainstWord(word) {
+module.exports = function testGuesserAgainstWord(word, logResults) {
   const makeGuess = createGameBoard(word)
   const guesser = createGuesser()
 
@@ -19,9 +19,11 @@ module.exports = function testGuesserAgainstWord(word) {
     guesser.reportGuessResponse(guessResponse.wordMatch)
   }
   logStr += isCorrect ? 'Success!' : 'Fail'
-  console.log(logStr)
+  if(logResults) {
+    console.log(logStr)
+  }
 
-  expect(isCorrect).toBe(true)
+  return isCorrect
 }
 
 function createGameBoard(word) {
