@@ -6,6 +6,8 @@ const delayAfterInvalidWordMs = 500
 const delayBetweenEnterLetterMs = 200
 const delayBetweenDeleteLetterMs = 100
 const delayWaitForGuessToBeReadyMs = 3000
+const numberOfLetters = 5
+const numberOfGuesses = 6
 
 main()
 
@@ -42,7 +44,7 @@ async function main() {
   async function makeGuesses(guessConfig) {
     let success = false
     let rowIndex = 0
-    while(rowIndex < 6 && !success) {
+    while(rowIndex < numberOfGuesses && !success) {
       success = await makeGuess(guessConfig, rowIndex)
       rowIndex++
     }
@@ -78,7 +80,7 @@ async function main() {
 
   function modifyConfigFromGuess(guessConfig, guessResponse) {
     let guessWord = ''
-    for(let i = 0; i < 5; i++) {
+    for(let i = 0; i < numberOfLetters; i++) {
       const guessResponseLetter = guessResponse[i]
       guessWord += guessResponseLetter.letter
       if(guessResponseLetter.evaluation === 'correct') {
@@ -122,7 +124,7 @@ async function main() {
   }
 
   async function clearGuess() {
-    for(let i = 0; i < 5; i++) {
+    for(let i = 0; i < numberOfLetters; i++) {
       enterLetter('Backspace')
       await wait(delayBetweenDeleteLetterMs)
     }
