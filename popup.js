@@ -4,7 +4,7 @@ document.getElementById("solveWordle").addEventListener("click", async () => {
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    function: setPageBackgroundColor,
+    files: ['content-script.js']
   });
 });
 
