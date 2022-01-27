@@ -4,12 +4,6 @@ document.getElementById("solveWordle").addEventListener("click", async () => {
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    files: ['content-script.js']
+    files: ['dist/main.js']
   });
 });
-
-// The body of this function will be executed as a content script inside the
-// current page
-function setPageBackgroundColor() {
-  console.log('Solve that Wordle!')
-}

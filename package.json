@@ -1,0 +1,11 @@
+{
+  "name": "wordle-solver",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7",
+    "webpack": "^5.67.0",
+    "webpack-cli": "^4.9.2"
+  }
+}
