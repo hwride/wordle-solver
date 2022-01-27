@@ -12,7 +12,7 @@ function createGuesser() {
   const guessConfig = initGuessConfig()
   return {
     findNextGuess: () => findNextGuess(guessConfig),
-    modifyConfigFromGuess: guessResponse => modifyConfigFromGuess(guessConfig, guessResponse),
+    reportGuessResponse: guessResponse => reportGuessResponse(guessConfig, guessResponse),
     registerInvalidWord: word => guessConfig.invalidWords.push(word)
   }
 }
@@ -98,7 +98,7 @@ function findNextGuess(guessConfig) {
 /**
  * Modify some given guess config according to the response to a guess.
  */
-function modifyConfigFromGuess(guessConfig, guessResponse) {
+function reportGuessResponse(guessConfig, guessResponse) {
   let isCorrect = true
   let guessWord = ''
   for(let i = 0; i < numberOfLetters; i++) {
@@ -127,4 +127,4 @@ exports.createGuesser = createGuesser
 // Exported for test only
 exports.initGuessConfig = initGuessConfig
 exports.findNextGuess = findNextGuess
-exports.modifyConfigFromGuess = modifyConfigFromGuess
+exports.reportGuessResponse = reportGuessResponse

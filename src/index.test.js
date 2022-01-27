@@ -6,7 +6,6 @@ it('should return an array from getWords', () => {
 
 function test() {
   testFullMatch('boats')
-  testFindWordMatching()
 
   function testFullMatch(word) {
     const guessConfig = {
@@ -35,7 +34,7 @@ function test() {
       console.log('Guess: %o', guessWord)
       const guessResponse = guess(guessWord)
       console.log('Guess response: %o', guessResponse)
-      modifyConfigFromGuess(guessConfig, guessResponse)
+      reportGuessResponse(guessConfig, guessResponse)
       console.log('Guess config: %o', guessConfig)
     }
 
@@ -66,7 +65,7 @@ function test() {
       return guessResponse
     }
 
-    function modifyConfigFromGuess(guessConfig, guessResponse) {
+    function reportGuessResponse(guessConfig, guessResponse) {
       for (let i = 0; i < 5; i++) {
         const guessResponseLetter = guessResponse.wordMatch[i]
         if (guessResponseLetter.evaluation === 'correct') {

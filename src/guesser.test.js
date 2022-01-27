@@ -1,4 +1,5 @@
-const { initGuessConfig, findNextGuess, modifyConfigFromGuess } = require('./guesser')
+const { numberOfGuesses } = require('./config')
+const { initGuessConfig, findNextGuess, reportGuessResponse, createGuesser } = require('./guesser')
 
 describe('find next guess', () => {
 
@@ -80,7 +81,7 @@ describe('modify config from guess', () => {
 
   it('should mark letters as exact when they match exactly', () => {
     const guessConfig = initGuessConfig()
-    modifyConfigFromGuess(guessConfig, [
+    reportGuessResponse(guessConfig, [
       { evaluation: 'correct', letter: 'b' },
       { evaluation: 'correct', letter: 'o' },
       { evaluation: 'correct', letter: 'a' },
@@ -104,7 +105,7 @@ describe('modify config from guess', () => {
 
   it('should mark letters as unknown and not matching when they do not match at all', () => {
     const guessConfig = initGuessConfig()
-    modifyConfigFromGuess(guessConfig, [
+    reportGuessResponse(guessConfig, [
       { evaluation: 'absent', letter: 'b' },
       { evaluation: 'absent', letter: 'o' },
       { evaluation: 'absent', letter: 'a' },
@@ -128,7 +129,7 @@ describe('modify config from guess', () => {
 
   it('should mark letters as unknown and matching but unknown position if appropriate', () => {
     const guessConfig = initGuessConfig()
-    modifyConfigFromGuess(guessConfig, [
+    reportGuessResponse(guessConfig, [
       { evaluation: 'present', letter: 'b' },
       { evaluation: 'present', letter: 'o' },
       { evaluation: 'present', letter: 'a' },
@@ -152,7 +153,7 @@ describe('modify config from guess', () => {
 
   it('more complex example', () => {
     const guessConfig = initGuessConfig()
-    modifyConfigFromGuess(guessConfig, [
+    reportGuessResponse(guessConfig, [
       { evaluation: 'present', letter: 'b' },
       { evaluation: 'absent', letter: 'o' },
       { evaluation: 'absent', letter: 'a' },
@@ -173,5 +174,57 @@ describe('modify config from guess', () => {
       invalidWords: []
     })
   })
+
+})
+
+describe('guesser full tests', () => {
+
+  it('should guess boats', () => testGuesserAgainstWord('boats'))
+
+  function testGuesserAgainstWord(word) {
+    const makeGuess = createGameBoard(word)
+    const guesser = createGuesser()
+
+    let isCorrect = false
+    for(let i = 0; i < numberOfGuesses; i++) {
+      const guess = guesser.findNextGuess()
+      const guessResponse = makeGuess(guess)
+      if(guessResponse.correct) {
+        isCorrect = true
+        break
+      }
+      guesser.reportGuessResponse(guessResponse.wordMatch)
+    }
+    expect(isCorrect).toBe(true)
+  }
+
+  function createGameBoard(word) {
+    return (guessWord) => {
+      const guessResponse = {
+        wordMatch: []
+      }
+      let allLettersCorrect = true
+      const wordCharacters = new Set(Array.from(word))
+      for (let i = 0; i < 5; i++) {
+        const letter = word[i]
+        const guessLetter = guessWord[i]
+        const letterResponse = {
+          letter: guessLetter
+        }
+        if (letter === guessLetter) {
+          letterResponse.evaluation = 'correct'
+        } else if (wordCharacters.has(guessLetter)) {
+          letterResponse.evaluation = 'present'
+          allLettersCorrect = false
+        } else {
+          letterResponse.evaluation = 'absent'
+          allLettersCorrect = false
+        }
+        guessResponse.wordMatch.push(letterResponse)
+      }
+      guessResponse.correct = allLettersCorrect
+      return guessResponse
+    }
+  }
 
 })

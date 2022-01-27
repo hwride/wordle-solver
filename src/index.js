@@ -60,7 +60,7 @@ async function makeGuess(guesser, rowIndex) {
   const isSuccessBool = isSuccess(rowIndex)
   if (!isSuccessBool) {
     const guessResult = getRowWord(rowIndex)
-    guesser.modifyConfigFromGuess(guessResult)
+    guesser.reportGuessResponse(guessResult)
   }
   return isSuccessBool
 }
