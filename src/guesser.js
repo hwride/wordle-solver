@@ -99,7 +99,7 @@ function modifyConfigFromGuess(guessConfig, guessResponse) {
       guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
       guessConfig.matchingUnknownPositionLetters.push(guessResponseLetter.letter)
       isCorrect = false
-    } else {
+    } else { // absent
       guessConfig.wordMatch[i].nonMatchingLetters.push(guessResponseLetter.letter)
       guessConfig.nonMatchingLetters.push(guessResponseLetter.letter)
       isCorrect = false

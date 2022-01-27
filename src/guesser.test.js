@@ -78,7 +78,7 @@ describe('find next guess', () => {
 
 describe('modify config from guess', () => {
 
-  it('should mark letters at exact when they match exactly', () => {
+  it('should mark letters as exact when they match exactly', () => {
     const guessConfig = initGuessConfig()
     modifyConfigFromGuess(guessConfig, [
       { evaluation: 'correct', letter: 'b' },
@@ -98,6 +98,78 @@ describe('modify config from guess', () => {
       nonMatchingLetters: [],
       matchingUnknownPositionLetters: [],
       nonMatchingWords: [],
+      invalidWords: []
+    })
+  })
+
+  it('should mark letters as unknown and not matching when they do not match at all', () => {
+    const guessConfig = initGuessConfig()
+    modifyConfigFromGuess(guessConfig, [
+      { evaluation: 'absent', letter: 'b' },
+      { evaluation: 'absent', letter: 'o' },
+      { evaluation: 'absent', letter: 'a' },
+      { evaluation: 'absent', letter: 't' },
+      { evaluation: 'absent', letter: 's' },
+    ])
+    expect(guessConfig).toEqual({
+      wordMatch: [
+        { match: 'unknown', nonMatchingLetters: ['b'] },
+        { match: 'unknown', nonMatchingLetters: ['o'] },
+        { match: 'unknown', nonMatchingLetters: ['a'] },
+        { match: 'unknown', nonMatchingLetters: ['t'] },
+        { match: 'unknown', nonMatchingLetters: ['s'] }
+      ],
+      nonMatchingLetters: ['b', 'o', 'a', 't', 's'],
+      matchingUnknownPositionLetters: [],
+      nonMatchingWords: ['boats'],
+      invalidWords: []
+    })
+  })
+
+  it('should mark letters as unknown and matching but unknown position if appropriate', () => {
+    const guessConfig = initGuessConfig()
+    modifyConfigFromGuess(guessConfig, [
+      { evaluation: 'present', letter: 'b' },
+      { evaluation: 'present', letter: 'o' },
+      { evaluation: 'present', letter: 'a' },
+      { evaluation: 'present', letter: 't' },
+      { evaluation: 'present', letter: 's' },
+    ])
+    expect(guessConfig).toEqual({
+      wordMatch: [
+        { match: 'unknown', nonMatchingLetters: ['b'] },
+        { match: 'unknown', nonMatchingLetters: ['o'] },
+        { match: 'unknown', nonMatchingLetters: ['a'] },
+        { match: 'unknown', nonMatchingLetters: ['t'] },
+        { match: 'unknown', nonMatchingLetters: ['s'] }
+      ],
+      nonMatchingLetters: [],
+      matchingUnknownPositionLetters: ['b', 'o', 'a', 't', 's'],
+      nonMatchingWords: ['boats'],
+      invalidWords: []
+    })
+  })
+
+  it('more complex example', () => {
+    const guessConfig = initGuessConfig()
+    modifyConfigFromGuess(guessConfig, [
+      { evaluation: 'present', letter: 'b' },
+      { evaluation: 'absent', letter: 'o' },
+      { evaluation: 'absent', letter: 'a' },
+      { evaluation: 'correct', letter: 't' },
+      { evaluation: 'present', letter: 's' },
+    ])
+    expect(guessConfig).toEqual({
+      wordMatch: [
+        { match: 'unknown', nonMatchingLetters: ['b'] },
+        { match: 'unknown', nonMatchingLetters: ['o'] },
+        { match: 'unknown', nonMatchingLetters: ['a'] },
+        { match: 'exact', letter: 't', nonMatchingLetters: [] },
+        { match: 'unknown', nonMatchingLetters: ['s'] }
+      ],
+      nonMatchingLetters: ['o', 'a'],
+      matchingUnknownPositionLetters: ['b', 's'],
+      nonMatchingWords: ['boats'],
       invalidWords: []
     })
   })
