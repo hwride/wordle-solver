@@ -3,8 +3,14 @@
   "description": "Will attempt to solve Wordle's by entering guesses.",
   "version": "0.0.1",
   "manifest_version": 3,
-  "content_scripts": [{
-    "matches": ["https://www.powerlanguage.co.uk/*"],
-    "js": ["test.js"]
-  }]
+  "host_permissions": [
+    "https://www.powerlanguage.co.uk/*"
+  ],
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
 }
